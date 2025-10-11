@@ -1,4 +1,3 @@
-// import './App.css'
 import {ThemeProvider} from '@mui/material/styles';
 import {Box, Container, CssBaseline, Grid, Typography} from "@mui/material";
 import CountryCard from './components/CountryCard';
