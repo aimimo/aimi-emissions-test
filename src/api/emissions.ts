@@ -1,4 +1,5 @@
 export interface CountryEmissions {
+    chartType?: 'pie' | 'bar';
     country: 'NZ' | 'AU';
     timestamp: string;
     totalDemandMW: number;

@@ -2,28 +2,22 @@ import {
     Card,
     CardContent,
     Typography,
-    Box,
-    Chip,
+    Box
 } from '@mui/material';
 import type {CountryEmissions} from "../api/emissions.ts";
-
-const fuelColors: Record<string, 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'> = {
-    hydro: 'primary',
-    wind: 'info',
-    solar: 'success',
-    gas: 'warning',
-    coal: 'default',
-    geothermal: 'secondary',
-    battery: 'default',
-    coGen: 'default',
-    dieselOil: 'default',
-};
+import FuelBreakdownList from "./FuelBreakdownList.tsx";
+import { FUEL_COLORS } from "../utils/constants.ts";
+import { formatGenerationMix, attachMWValues } from "../utils/chartUtils.ts";
 
 interface CountryProps extends CountryEmissions {
+    chartType?: "pie" | "bar" | undefined;
     generationMWh?: Record<string, number>
 }
 
 const CountryCard = (props: CountryProps) => {
+    const chartData = formatGenerationMix(props.generationMix || {});
+    const chartDataWithMW = attachMWValues(chartData, props.totalDemandMW);
+
     return (
         <Card sx={{height: '100%'}}>
             <CardContent>
@@ -32,7 +26,7 @@ const CountryCard = (props: CountryProps) => {
                     {props.country}
                 </Typography>
 
-                {/* Carbon intensity card */}
+                {/* Carbon intensity */}
                 <Box
                     sx={{
                         backgroundColor: getIntensityColor(props.carbonIntensity_gCO2kWh),
@@ -51,6 +45,16 @@ const CountryCard = (props: CountryProps) => {
                     </Typography>
                 </Box>
 
+                {/* Total Demand */}
+                {props.totalDemandMW && (
+                    <Box sx={{marginTop: 2}}>
+                        <Typography variant="body2">
+                            Total Demand: <strong>{props.totalDemandMW.toFixed(2)} MW</strong>
+                        </Typography>
+                    </Box>
+                )}
+
+                {/* Last Updated */}
                 <Typography variant="caption" color="textSecondary">
                     Updated: {new Intl.DateTimeFormat('en-GB', {
                     day: '2-digit',
@@ -62,33 +66,11 @@ const CountryCard = (props: CountryProps) => {
                     timeZone: 'Pacific/Auckland',
                     timeZoneName: 'shortGeneric'
                 }).format(new Date(props.timestamp))}
-
                 </Typography>
 
-                {/* Generation mix */}
-                <Box sx={{marginTop: 2}}>
-                    <Typography variant="subtitle2" gutterBottom>
-                        Generation Mix:
-                    </Typography>
-                    <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
-                        {Object.entries(props.generationMix).map(([fuel, percent]) => (
-                            <Chip
-                                key={fuel}
-                                label={`${fuel.charAt(0).toUpperCase() + fuel.slice(1)}: ${percent}%`}
-                                color={fuelColors[fuel]}
-                                variant="outlined"
-                            />
-                        ))}
-                    </Box>
+                <Box sx={{marginTop: 3}}>
+                    <FuelBreakdownList items={chartDataWithMW} colors={FUEL_COLORS} />
                 </Box>
-
-                {props.totalDemandMW && (
-                    <Box sx={{marginTop: 2}}>
-                        <Typography variant="body2">
-                            Total Demand: <strong>{props.totalDemandMW} MW</strong>
-                        </Typography>
-                    </Box>
-                )}
             </CardContent>
         </Card>
     );
