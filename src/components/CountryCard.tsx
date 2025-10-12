@@ -5,24 +5,25 @@ import {
     Box,
     Chip,
 } from '@mui/material';
+import type {CountryEmissions} from "../api/emissions.ts";
 
-interface CountryEmissions {
-    country: "NZ" | "AU";
-    timestamp: string;
-    totalDemandMW: number;
-    carbonIntensity_gCO2kWh: number;
-    generationMix: {
-        hydro?: number;
-        wind?: number;
-        solar?: number;
-        gas?: number;
-        coal?: number;
-        geothermal?: number;
-        other?: number;
-    };
+const fuelColors: Record<string, 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'> = {
+    hydro: 'primary',
+    wind: 'info',
+    solar: 'success',
+    gas: 'warning',
+    coal: 'default',
+    geothermal: 'secondary',
+    battery: 'default',
+    coGen: 'default',
+    dieselOil: 'default',
+};
+
+interface CountryProps extends CountryEmissions {
+    generationMWh?: Record<string, number>
 }
 
-const CountryCard = (props: CountryEmissions) => {
+const CountryCard = (props: CountryProps) => {
     return (
         <Card sx={{height: '100%'}}>
             <CardContent>
@@ -50,9 +51,18 @@ const CountryCard = (props: CountryEmissions) => {
                     </Typography>
                 </Box>
 
-                {/* Timestamp */}
                 <Typography variant="caption" color="textSecondary">
-                    Updated: {new Date(props.timestamp).toLocaleTimeString()}
+                    Updated: {new Intl.DateTimeFormat('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    timeZone: 'Pacific/Auckland',
+                    timeZoneName: 'shortGeneric'
+                }).format(new Date(props.timestamp))}
+
                 </Typography>
 
                 {/* Generation mix */}
@@ -61,49 +71,17 @@ const CountryCard = (props: CountryEmissions) => {
                         Generation Mix:
                     </Typography>
                     <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 1}}>
-                        {props.generationMix.hydro && (
+                        {Object.entries(props.generationMix).map(([fuel, percent]) => (
                             <Chip
-                                label={`Hydro: ${props.generationMix.hydro}%`}
-                                color="primary"
+                                key={fuel}
+                                label={`${fuel.charAt(0).toUpperCase() + fuel.slice(1)}: ${percent}%`}
+                                color={fuelColors[fuel]}
                                 variant="outlined"
                             />
-                        )}
-                        {props.generationMix.wind && (
-                            <Chip
-                                label={`Wind: ${props.generationMix.wind}%`}
-                                color="info"
-                                variant="outlined"
-                            />
-                        )}
-                        {props.generationMix.solar && (
-                            <Chip
-                                label={`Solar: ${props.generationMix.solar}%`}
-                                variant="outlined"
-                            />
-                        )}
-                        {props.generationMix.gas && (
-                            <Chip
-                                label={`Gas: ${props.generationMix.gas}%`}
-                                color="warning"
-                                variant="outlined"
-                            />
-                        )}
-                        {props.generationMix.coal && (
-                            <Chip
-                                label={`Coal: ${props.generationMix.coal}%`}
-                                variant="outlined"
-                            />
-                        )}
-                        {props.generationMix.geothermal && (
-                            <Chip
-                                label={`Geothermal: ${props.generationMix.geothermal}%`}
-                                variant="outlined"
-                            />
-                        )}
+                        ))}
                     </Box>
                 </Box>
 
-                {/* Total demand */}
                 {props.totalDemandMW && (
                     <Box sx={{marginTop: 2}}>
                         <Typography variant="body2">
