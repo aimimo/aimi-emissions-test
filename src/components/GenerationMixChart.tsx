@@ -16,7 +16,7 @@ import {
     calculateRenewablePercentages,
     attachMWValues,
 } from '../utils/chartUtils.ts';
-import {Box, Typography} from '@mui/material';
+import {Box, Card, Typography} from '@mui/material';
 import {type CountryEmissions} from '../api/emissions';
 import {FUEL_COLORS, renewableFuels} from "../utils/constants.ts";
 
@@ -34,7 +34,7 @@ const GenerationMixChart = ({data}: GenerationMixChartProps) => {
     const chartDataWithMW = attachMWValues(chartData, data.totalDemandMW);
 
     return (
-        <Box sx={{p: 3, mt: 2}}>
+        <Card sx={{p: 3, mt: 2}}>
             <Typography variant="h6" gutterBottom>
                 Generation Mix - {data.country}
             </Typography>
@@ -135,7 +135,7 @@ const GenerationMixChart = ({data}: GenerationMixChartProps) => {
                     </Typography>
                 </Box>
             </Box>
-        </Box>
+        </Card>
     );
 };
 

@@ -18,6 +18,27 @@ export interface CountryEmissions {
     };
 }
 
+interface GenerationType {
+    hyd_mwh?: number;
+    win_mwh?: number;
+    sol_mwh?: number;
+    gas_mwh?: number;
+    geo_mwh?: number;
+    cg_mwh?: number;
+    cog_mwh?: number;
+    liq_mwh?: number;
+    bat_mwh?: number;
+}
+
+interface NZPriceItem {
+    trading_date: string;
+    generation_type: GenerationType[];
+}
+
+interface NZPriceResponse {
+    items: NZPriceItem[];
+}
+
 const generateMockAUData = (): CountryEmissions => {
     return {
         country: 'AU',
@@ -49,27 +70,6 @@ const generateMockNZData = (): CountryEmissions => {
         },
     };
 };
-
-interface GenerationType {
-    hyd_mwh?: number;
-    win_mwh?: number;
-    sol_mwh?: number;
-    gas_mwh?: number;
-    geo_mwh?: number;
-    cg_mwh?: number;
-    cog_mwh?: number;
-    liq_mwh?: number;
-    bat_mwh?: number;
-}
-
-interface NZPriceItem {
-    trading_date: string;
-    generation_type: GenerationType[];
-}
-
-interface NZPriceResponse {
-    items: NZPriceItem[];
-}
 
 export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
     try {
