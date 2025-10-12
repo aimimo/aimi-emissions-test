@@ -165,6 +165,18 @@ export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
 interface AURegionData {
     totalDemandMW: number;
     carbonIntensity_gCO2kWh: number;
+    generationMix?: {
+        hydro?: number;
+        wind?: number;
+        solar?: number;
+        gas?: number;
+        coal?: number;
+        geothermal?: number;
+        other?: number;
+        battery?: number;
+        coGen?: number;
+        dieselOil?: number;
+    };
 }
 
 type AUApiResponse = Record<string, AURegionData>;
@@ -179,6 +191,8 @@ export const fetchAUEmissions = async (): Promise<CountryEmissions | null> => {
             console.error('AU API error:', response.status);
             console.log('Falling back to mock AU data');
             return generateMockAUData();
+        } else {
+            console.log('AU API response:', response);
         }
 
         const data = (await response.json()) as AUApiResponse;
@@ -188,23 +202,30 @@ export const fetchAUEmissions = async (): Promise<CountryEmissions | null> => {
                 return sum + (region.totalDemandMW || 0);
             }, 0) || 0;
 
+        const aggregatedMix: Record<string, number> = {};
+        Object.values(data).forEach(region => {
+            Object.entries(region.generationMix || {}).forEach(([fuel, percent]) => {
+                aggregatedMix[fuel] = (aggregatedMix[fuel] || 0) + percent;
+            });
+        });
+
         const avgCarbon =
             Object.values(data).reduce((sum, region) => {
                 return sum + (region.carbonIntensity_gCO2kWh || 0);
             }, 0) / Object.keys(data).length || 0;
+
+        const totalPercent = Object.values(aggregatedMix).reduce((a, b) => a + b, 0);
+
+        const normalizedMix = Object.fromEntries(
+            Object.entries(aggregatedMix).map(([fuel, val]) => [fuel, Math.round((val / totalPercent) * 100)])
+        );
 
         const emissions: CountryEmissions = {
             country: 'AU',
             timestamp: new Date().toISOString(),
             totalDemandMW: totalDemand,
             carbonIntensity_gCO2kWh: Math.round(avgCarbon),
-            generationMix: {
-                coal: 40,
-                wind: 25,
-                solar: 20,
-                gas: 10,
-                other: 5,
-            },
+            generationMix: normalizedMix
         };
 
         return emissions;
@@ -224,5 +245,5 @@ export const fetchAllEmissions = async (): Promise<{
         fetchAUEmissions(),
     ]);
 
-    return { nz, au };
+    return {nz, au};
 };
