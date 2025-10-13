@@ -16,33 +16,51 @@ import {
     calculateRenewablePercentages,
     attachMWValues,
 } from '../utils/chartUtils.ts';
-import {Box, Card, Typography} from '@mui/material';
+import {Box, Card, ToggleButton, ToggleButtonGroup, Typography} from '@mui/material';
 import {type CountryEmissions} from '../api/emissions';
 import {FUEL_COLORS, renewableFuels} from "../utils/constants.ts";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import PieChartIcon from "@mui/icons-material/PieChart";
+import {useState} from "react";
 
 interface GenerationMixChartProps {
     data: CountryEmissions;
     chartType?: 'pie' | 'bar';
 }
 
-const GenerationMixChart = ({data}: GenerationMixChartProps) => {
+const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
     const generationMix = data.generationMix || {};
-    const chartType = data.chartType;
     const chartData = formatGenerationMix(generationMix);
     const {renewablePercentage, nonRenewablePercentage} =
         calculateRenewablePercentages(chartData, renewableFuels);
     const chartDataWithMW = attachMWValues(chartData, data.totalDemandMW);
-
+    const [newChartType, setChartType] = useState<'bar' | 'pie'>(chartType ?? 'bar')
     return (
         <Card sx={{p: 3, mt: 2}}>
-            <Typography variant="h6" gutterBottom>
-                Generation Mix - {data.country}
-            </Typography>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 2, mb:3}}>
+                <Typography variant="h6" gutterBottom>
+                    Generation Mix: {data.country}
+                </Typography>
+                <ToggleButtonGroup
+                    onChange={(_, value) => {
+                        if (value) {
+                            setChartType(value);
+                        }
+                    }}
+                >
+                    <ToggleButton value="bar">
+                        <BarChartIcon></BarChartIcon>
+                    </ToggleButton>
+                    <ToggleButton value="pie">
+                        <PieChartIcon></PieChartIcon>
+                    </ToggleButton>
+                </ToggleButtonGroup>
+            </Box>
 
             {/* Chart */}
             <Box sx={{width: '100%', height: 300, mb: 3}}>
                 <ResponsiveContainer width="100%" height="100%">
-                    {chartType === 'pie' ? (
+                    {newChartType == 'pie' ? (
                         <PieChart>
                             <Pie
                                 data={chartDataWithMW}
@@ -53,6 +71,7 @@ const GenerationMixChart = ({data}: GenerationMixChartProps) => {
                                 outerRadius={80}
                                 fill="#8884d8"
                                 dataKey="value"
+                                nameKey="name"
                             >
                                 {chartDataWithMW.map((entry, index) => (
                                     <Cell
@@ -62,10 +81,9 @@ const GenerationMixChart = ({data}: GenerationMixChartProps) => {
                                 ))}
                             </Pie>
                             <Tooltip
-                                formatter={(value: number, name: string) => {
-                                    if (name === 'value') return [`${value}%`, 'Percentage'];
-                                    if (name === 'mw') return [`${value} MW`, 'Power'];
-                                    return [value, name];
+                                formatter={(value: number, name: string, props) => {
+                                    const mw = props.payload.mw;
+                                    return [`${value}% (${mw} MW)`, name];
                                 }}
                             />
                             <Legend/>

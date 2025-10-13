@@ -6,7 +6,7 @@ import {
     Typography,
     Button,
     CircularProgress,
-    Alert, Paper,
+    Alert
 } from '@mui/material';
 import {fetchAllEmissions, type CountryEmissions} from '../api/emissions';
 import CountryCard from './CountryCard';
@@ -45,16 +45,16 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <Container maxWidth="lg">
+        <Container>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4}}>
                 <Typography variant="h3" gutterBottom>
                     Live Emissions Dashboard
                 </Typography>
                 <Button
-                    variant="contained"
                     color="primary"
                     onClick={loadEmissions}
                     disabled={loading}
+                    sx={{borderRadius: '16px'}}
                 >
                     {loading ? 'Refreshing...' : 'Refresh'}
                 </Button>
@@ -78,16 +78,18 @@ const Dashboard = () => {
             {nzData && auData && (
                 <Grid container spacing={3} sx={{mt: 1}}>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Paper>
-                            <CountryCard {...nzData} />
-                            <GenerationMixChart data={nzData}/>
-                        </Paper>
+                        <Typography variant="h5" gutterBottom>
+                            New Zealand (Aotearoa)
+                        </Typography>
+                        <CountryCard {...nzData} />
+                        <GenerationMixChart data={nzData}/>
                     </Grid>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Paper>
-                            <CountryCard {...auData} />
-                            <GenerationMixChart data={auData}/>
-                        </Paper>
+                        <Typography variant="h5" gutterBottom>
+                            Australia
+                        </Typography>
+                        <CountryCard {...auData} />
+                        <GenerationMixChart data={auData}/>
                     </Grid>
                 </Grid>
             )}

@@ -19,29 +19,23 @@ const CountryCard = (props: CountryProps) => {
     const chartDataWithMW = attachMWValues(chartData, props.totalDemandMW);
 
     return (
-        <Card sx={{height: '100%'}}>
+        <Card>
             <CardContent>
-                {/* Header with country name */}
-                <Typography variant="h5" gutterBottom>
-                    {props.country}
-                </Typography>
-
                 {/* Carbon intensity */}
+                <Typography variant="h6">Carbon Intensity: {props.country}</Typography>
                 <Box
                     sx={{
-                        backgroundColor: getIntensityColor(props.carbonIntensity_gCO2kWh),
-                        padding: 2,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 2,
+                        p: 2,
                         borderRadius: 1,
-                        color: 'white',
-                        marginY: 2,
-                        textAlign: 'center',
+                        backgroundColor: getIntensityColor(props.carbonIntensity_gCO2kWh),
+                        color: getIntensityTextColor(props.carbonIntensity_gCO2kWh),
                     }}
                 >
-                    <Typography variant="h3" sx={{fontWeight: 'bold'}}>
-                        {props.carbonIntensity_gCO2kWh}
-                    </Typography>
-                    <Typography variant="body2">
-                        gCO₂/kWh
+                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                        {props.carbonIntensity_gCO2kWh} gCO₂/kWh
                     </Typography>
                 </Box>
 
@@ -78,8 +72,13 @@ const CountryCard = (props: CountryProps) => {
 
 const getIntensityColor = (intensity: number): string => {
     if (intensity < 100) return '#729c37';
-    if (intensity < 500) return '#f4d436';
+    if (intensity < 500) return '#ffe246';
     return '#e33131'
+}
+
+const getIntensityTextColor = (intensity: number): string => {
+    if (intensity < 100 || intensity > 500) return 'white';
+    return '#736002'
 }
 
 export default CountryCard;
