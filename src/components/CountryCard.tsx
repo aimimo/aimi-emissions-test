@@ -6,8 +6,8 @@ import {
 } from '@mui/material';
 import type {CountryEmissions} from "../api/emissions.ts";
 import FuelBreakdownList from "./FuelBreakdownList.tsx";
-import { FUEL_COLORS } from "../utils/constants.ts";
-import { formatGenerationMix, attachMWValues } from "../utils/chartUtils.ts";
+import {FUEL_COLORS} from "../utils/constants.ts";
+import {formatGenerationMix, attachMWValues} from "../utils/chartUtils.ts";
 
 interface CountryProps extends CountryEmissions {
     chartType?: "pie" | "bar" | undefined;
@@ -19,7 +19,12 @@ const CountryCard = (props: CountryProps) => {
     const chartDataWithMW = attachMWValues(chartData, props.totalDemandMW);
 
     return (
-        <Card>
+        <Card sx={{
+            transition: 'all 0.6s ease',
+            '&:hover': {
+                transform: 'scale(1.03)',
+            }
+        }}>
             <CardContent>
                 {/* Carbon intensity */}
                 <Typography variant="h6" marginBottom={"10px"}>Carbon Intensity</Typography>
@@ -34,7 +39,7 @@ const CountryCard = (props: CountryProps) => {
                         color: getIntensityTextColor(props.carbonIntensity_gCO2kWh),
                     }}
                 >
-                    <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h4" sx={{fontWeight: 'bold'}}>
                         {props.carbonIntensity_gCO2kWh} gCO₂/kWh
                     </Typography>
                 </Box>
@@ -63,7 +68,7 @@ const CountryCard = (props: CountryProps) => {
                 </Typography>
 
                 <Box sx={{marginTop: 3}}>
-                    <FuelBreakdownList items={chartDataWithMW} colors={FUEL_COLORS} />
+                    <FuelBreakdownList items={chartDataWithMW} colors={FUEL_COLORS}/>
                 </Box>
             </CardContent>
         </Card>

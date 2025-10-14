@@ -4,15 +4,11 @@ const theme = createTheme({
     palette: {
         mode: 'light', // or 'dark'
         primary: {
-            main: '#102517',
+            main: '#3f6140',
             light: '#4f7350',
         },
         secondary: {
-            main: '#4f7350',
-            light: '#d3ae62',
-        },
-        background: {
-            default: '#e9f0dd',
+            main: '#d3a240',
         },
         text: {
             primary: '#102517',
@@ -22,7 +18,7 @@ const theme = createTheme({
     typography: {
         fontFamily: '"Inter", "Roboto", "Arial", sans-serif',
         h2: {
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '3rem',
         },
         h3: {

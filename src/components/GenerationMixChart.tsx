@@ -22,9 +22,9 @@ import {FUEL_COLORS, renewableFuels} from "../utils/constants.ts";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import {useState} from "react";
-import { useTheme } from '@mui/material/styles';
+import {useTheme} from '@mui/material/styles';
 
-interface GenerationMixChartProps {
+export interface GenerationMixChartProps {
     data: CountryEmissions;
     chartType?: 'pie' | 'bar';
 }
@@ -47,7 +47,7 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
 
     return (
         <Box>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 2, mb:3}}>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 2, mb: 3}}>
                 <Typography variant="h6">
                     Generation Mix
                 </Typography>
@@ -75,7 +75,7 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
                                 cy="50%"
                                 labelLine={false}
                                 label={({name, value}) => `${name}: ${value}%`}
-                                outerRadius={80}
+                                outerRadius={100}
                                 fill="#8884d8"
                                 dataKey="value"
                                 nameKey="name"
@@ -88,6 +88,7 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
                                 ))}
                             </Pie>
                             <Tooltip
+                                contentStyle={{borderRadius: 10}}
                                 formatter={(value: number, name: string, props) => {
                                     const mw = props.payload.mw;
                                     return [`${value}% (${mw} MW)`, name];
@@ -111,8 +112,9 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
                                 }}
                             />
                             <Legend/>
-                            <Bar yAxisId="left" dataKey="value" fill={theme.palette.primary.light} name="Percentage (%)"/>
-                            <Bar yAxisId="right" dataKey="mw" fill={theme.palette.secondary.light} name="Power (MW)"/>
+                            <Bar yAxisId="left" dataKey="value" fill={theme.palette.primary.light}
+                                 name="Percentage (%)"/>
+                            <Bar yAxisId="right" dataKey="mw" fill={theme.palette.secondary.main} name="Power (MW)"/>
                         </BarChart>
                     )}
                 </ResponsiveContainer>

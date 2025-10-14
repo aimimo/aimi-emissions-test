@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# Live Emissions & Generation Mix Dashboard
+A real-time dashboard for monitoring electricity generation and carbon emissions, showing renewable vs non-renewable contributions in Australia and New Zealand.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+- Live emissions & generation mix per country (AU & NZ)
+- Interactive charts (bar & pie)
 
-Currently, two official plugins are available:
+## Tech Stack
+- **Frontend:** React + TypeScript
+- **UI Framework:** Material UI v7
+- **Charts:** Recharts
+- **Backend:** Node.js + Express
+- **Data Sources:**
+    - New Zealand: EM6 API (Transpower)
+    - Australia: OpenElectricity API via backend proxy
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setting up
+1. Clone the repository
 
-## React Compiler
+```git clone <your-repo-url>```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```cd <project-folder>```
 
-## Expanding the ESLint configuration
+2. Install frontend dependencies
+   ```npm install```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3. Install backend dependencies
+   ```cd server```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```npm install```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+4. Configure environment variables:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Create a new `.env` file in the project root directory
+To get an API key,
+- Register at [platform.openelectricity.org.au](https://platform.openelectricity.org.au)
+- Copy your API key to the .env file, following the structure below.
+
+```
+OPENNEM_API_KEY={your OpenElectricity API key}
+```
+For example:
+```
+OPENNEM_API_KEY=ex4mpl3_kEy_ABCDEFmpjdQleU2F083dd
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Note that without this, mock Australian data will be used instead of real data.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Running the Application
+1. Start the backend server
+   ```cd server```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```npm start```
+
+Backend runs on http://localhost:3001
+
+2. Start the frontend (in a new terminal)
+   ```npm run dev```
+
+Frontend runs on http://localhost:5173 (or the port shown in terminal)
+
+3. Open your browser and navigate to the frontend URL.
+
+---
+
+### API Endpoints
+Backend:
+- `GET /api/emissions/australia` : Returns emissions data for all Australian states within the National Electricity Market (NEM)
+
+External APIs:
+- NZ Data: EM6 API
+- AU Data: OpenElectricity API (proxied through backend)
+
+### AI Usage Disclosure
+This project was developed with some assistance from Claude (Anthropic) and ChatGPT, namely for:
+
+- Generating mock data structures and initial type definitions
+- Providing calculation templates for emissions aggregation (adapted for project needs)
+- Code review and optimization suggestions
+
+All generated code was reviewed, tested, and modified to meet project requirements. Core architectural and design decisions were made independently.

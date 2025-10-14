@@ -14,8 +14,8 @@ const FuelBreakdownItem = ({name, value, mw, color, showPercentage = false}: Fue
             sx={{
                 p: 0.8,
                 backgroundColor: '#f5f5f5',
-                borderRadius: 1,
-                borderLeft: `6px solid ${color}`,
+                borderRadius: 2,
+                borderLeft: `8px solid ${color}`,
             }}
         >
             <Typography variant="caption" display="block" color="textSecondary">

@@ -6,17 +6,19 @@ import {
     Typography,
     Button,
     CircularProgress,
-    Alert, Card, CardContent
+    Alert
 } from '@mui/material';
 import {fetchAllEmissions, type CountryEmissions} from '../api/emissions';
 import CountryCard from './CountryCard';
-import GenerationMixChart from "./GenerationMixChart.tsx";
+import {useTheme} from '@mui/material/styles';
+import ChartCard from "./ChartCard.tsx";
 
 const Dashboard = () => {
     const [nzData, setNzData] = useState<CountryEmissions | null>(null);
     const [auData, setAuData] = useState<CountryEmissions | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const theme = useTheme();
 
     const loadEmissions = async () => {
         try {
@@ -79,26 +81,34 @@ const Dashboard = () => {
             {nzData && auData && (
                 <Grid container spacing={3} sx={{mt: 1}}>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Typography variant="h5" gutterBottom textAlign={'center'}>
+                        <Typography variant="h5"
+                                    gutterBottom
+                                    textAlign={'center'}
+                                    color={"white"}
+                                    sx={{
+                                        backgroundColor: theme.palette.primary.light,
+                                        padding: '8px 16px',
+                                        borderRadius: '10px',
+                                    }}>
                             New Zealand (Aotearoa)
                         </Typography>
                         <CountryCard {...nzData} />
-                        <Card sx={{mt: 3}}>
-                            <CardContent>
-                                <GenerationMixChart data={nzData}/>
-                            </CardContent>
-                        </Card>
+                        <ChartCard data={nzData}/>
                     </Grid>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Typography variant="h5" gutterBottom textAlign={'center'}>
+                        <Typography variant="h5"
+                                    gutterBottom
+                                    textAlign={'center'}
+                                    color={"white"}
+                                    sx={{
+                                        backgroundColor: theme.palette.primary.light,
+                                        padding: '8px 16px',
+                                        borderRadius: '10px',
+                                    }}>
                             Australia
                         </Typography>
                         <CountryCard {...auData} />
-                        <Card sx={{mt: 3}}>
-                            <CardContent>
-                                <GenerationMixChart data={auData}/>
-                            </CardContent>
-                        </Card>
+                        <ChartCard data={auData}/>
                     </Grid>
                 </Grid>
             )}
