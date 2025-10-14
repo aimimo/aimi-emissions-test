@@ -17,7 +17,7 @@ A real-time dashboard for monitoring electricity generation and carbon emissions
 ## Setting up
 1. Clone the repository
 
-```git clone <your-repo-url>```
+```git clone https://github.com/aimimo/aimi-emissions-test.git```
 
 ```cd <project-folder>```
 
