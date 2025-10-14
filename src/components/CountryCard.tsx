@@ -22,7 +22,7 @@ const CountryCard = (props: CountryProps) => {
         <Card>
             <CardContent>
                 {/* Carbon intensity */}
-                <Typography variant="h6">Carbon Intensity: {props.country}</Typography>
+                <Typography variant="h6" textAlign={'center'}>Carbon Intensity</Typography>
                 <Box
                     sx={{
                         display: 'flex',

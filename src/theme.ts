@@ -4,31 +4,50 @@ const theme = createTheme({
     palette: {
         mode: 'light', // or 'dark'
         primary: {
-            main: '#1976d2',
+            main: '#102517',
+            light: '#4f7350',
         },
         secondary: {
-            main: '#dc004e',
+            main: '#4f7350',
+            light: '#d3ae62',
         },
         background: {
-            default: '#f5f5f5',
-            paper: '#ffffff',
+            default: '#e9f0dd',
+        },
+        text: {
+            primary: '#102517',
+            secondary: '#4f7350',
         }
     },
     typography: {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        h3: {
+        fontFamily: '"Inter", "Roboto", "Arial", sans-serif',
+        h2: {
             fontWeight: 600,
+            fontSize: '3rem',
+        },
+        h3: {
+            fontWeight: 700,
             fontSize: '2rem',
         },
         h5: {
-            fontWeight: 500,
+            fontWeight: 600,
             fontSize: '1.5rem',
         },
         body1: {
             fontSize: '1rem',
+            fontWeight: 500,
         },
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    background: 'linear-gradient(51deg, #add080, #f4d872)',
+                    backgroundAttachment: 'fixed',
+                    minHeight: '100vh',
+                },
+            },
+        },
         MuiCard: {
             styleOverrides: {
                 root: {

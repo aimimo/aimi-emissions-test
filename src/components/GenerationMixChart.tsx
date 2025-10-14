@@ -22,6 +22,7 @@ import {FUEL_COLORS, renewableFuels} from "../utils/constants.ts";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import {useState} from "react";
+import { useTheme } from '@mui/material/styles';
 
 interface GenerationMixChartProps {
     data: CountryEmissions;
@@ -35,6 +36,7 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
         calculateRenewablePercentages(chartData, renewableFuels);
     const chartDataWithMW = attachMWValues(chartData, data.totalDemandMW);
     const [newChartType, setChartType] = useState<'bar' | 'pie'>(chartType ?? 'bar')
+    const theme = useTheme();
     return (
         <Card sx={{p: 3, mt: 2}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 2, mb:3}}>
@@ -104,8 +106,8 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
                                 }}
                             />
                             <Legend/>
-                            <Bar yAxisId="left" dataKey="value" fill="#1976d2" name="Percentage (%)"/>
-                            <Bar yAxisId="right" dataKey="mw" fill="#FF9800" name="Power (MW)"/>
+                            <Bar yAxisId="left" dataKey="value" fill={theme.palette.primary.light} name="Percentage (%)"/>
+                            <Bar yAxisId="right" dataKey="mw" fill={theme.palette.secondary.light} name="Power (MW)"/>
                         </BarChart>
                     )}
                 </ResponsiveContainer>

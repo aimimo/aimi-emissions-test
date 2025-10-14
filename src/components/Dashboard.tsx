@@ -45,20 +45,21 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <Container>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4}}>
-                <Typography variant="h3" gutterBottom>
-                    Live Emissions Dashboard
-                </Typography>
-                <Button
-                    color="primary"
-                    onClick={loadEmissions}
-                    disabled={loading}
-                    sx={{borderRadius: '16px'}}
-                >
-                    {loading ? 'Refreshing...' : 'Refresh'}
-                </Button>
-            </Box>
+        <Container maxWidth={false} disableGutters={true}>
+            <Typography variant="h2"
+                        gutterBottom
+                        sx={{justifySelf: 'center'}}>
+                Live Emissions Dashboard
+            </Typography>
+            <Button
+                variant="contained"
+                color="secondary"
+                onClick={loadEmissions}
+                disabled={loading}
+                sx={{borderRadius: '16px'}}
+            >
+                {loading ? 'Refreshing...' : 'Refresh'}
+            </Button>
 
             {/* Error Message */}
             {error && (
@@ -78,14 +79,14 @@ const Dashboard = () => {
             {nzData && auData && (
                 <Grid container spacing={3} sx={{mt: 1}}>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Typography variant="h5" gutterBottom>
+                        <Typography variant="h5" gutterBottom textAlign={'center'}>
                             New Zealand (Aotearoa)
                         </Typography>
                         <CountryCard {...nzData} />
                         <GenerationMixChart data={nzData}/>
                     </Grid>
                     <Grid size={{xs: 12, md: 6}}>
-                        <Typography variant="h5" gutterBottom>
+                        <Typography variant="h5" gutterBottom textAlign={'center'}>
                             Australia
                         </Typography>
                         <CountryCard {...auData} />

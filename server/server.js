@@ -43,10 +43,6 @@ const fetchRegionData = async () => {
         const networkData = response.data;
         const powerData = networkData.data.find(d => d.metric === 'power');
         const emissionsData = networkData.data.find(d => d.metric === 'emissions');
-        console.log("DEBUG AU emissions raw:", {
-            sampleEmissionSeries: emissionsData.results[0],
-            samplePowerSeries: powerData.results[0],
-        });
 
         if (!powerData || !emissionsData) {
             console.error('Missing power or emissions data');
