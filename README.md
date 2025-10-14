@@ -71,6 +71,16 @@ External APIs:
 - NZ Data: EM6 API
 - AU Data: OpenElectricity API (proxied through backend)
 
+### Other notes
+1. The AU data has not been normalised, as I spent considerable time debugging an undocumented OpenElectricity API limitation. The request was returning a 500 error without being clear which parameter was failing, and I found that:
+    - Requesting multiple metrics together (`power`, `emissions`, `renewable_proportion`)
+      returns a 500 error, despite all three being documented as [valid metrics](https://docs.openelectricity.org.au/api-reference/data/get-network-data).
+    - The `renewable_proportion` metric always fails, being the root cause of the issue.
+    - This meant I could only work with `power` and `emissions` data.
+
+Hence, considering time constraints and the recommended assessment timebox of 8 hours, I prioritized delivering accurate data over spending more time on normalization that could introduce bugs or gaps in data.
+However, there is fallback mock data for both Australia and New Zealand available.
+
 ### AI Usage Disclosure
 This project was developed with some assistance from Claude (Anthropic) and ChatGPT, namely for:
 
