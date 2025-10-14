@@ -1,3 +1,5 @@
+import {getTotalGeneration, normalizeGenerationMix, parseGenerationMix} from "../utils/emissionsUtils";
+
 export interface CountryEmissions {
     country: 'NZ' | 'AU';
     timestamp: string;
@@ -17,7 +19,7 @@ export interface CountryEmissions {
     };
 }
 
-interface GenerationType {
+export interface GenerationType {
     hyd_mwh?: number;
     win_mwh?: number;
     sol_mwh?: number;
@@ -28,6 +30,22 @@ interface GenerationType {
     liq_mwh?: number;
     bat_mwh?: number;
 }
+
+type GenerationKey = keyof GenerationType;
+const fuelKeyMap: Record<
+    'battery' | 'hydro' | 'wind' | 'solar' | 'gas' | 'coal' | 'coGen' | 'geothermal' | 'dieselOil',
+    GenerationKey
+> = {
+    battery: 'bat_mwh',
+    hydro: 'hyd_mwh',
+    wind: 'win_mwh',
+    solar: 'sol_mwh',
+    gas: 'gas_mwh',
+    coal: 'cg_mwh',
+    coGen: 'cog_mwh',
+    geothermal: 'geo_mwh',
+    dieselOil: 'liq_mwh',
+};
 
 interface NZPriceItem {
     generation_type: GenerationType[];
@@ -64,32 +82,9 @@ export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
             return generateMockNZData();
         }
 
-        // Parse generation mix
-        const generation = {
-            battery: latestPrice.generation_type.reduce((sum, g) => sum + (g.bat_mwh ?? 0), 0),
-            hydro: latestPrice.generation_type.reduce((sum, g) => sum + (g.hyd_mwh ?? 0), 0),
-            wind: latestPrice.generation_type.reduce((sum, g) => sum + (g.win_mwh ?? 0), 0),
-            solar: latestPrice.generation_type.reduce((sum, g) => sum + (g.sol_mwh ?? 0), 0),
-            gas: latestPrice.generation_type.reduce((sum, g) => sum + (g.gas_mwh ?? 0), 0),
-            geothermal: latestPrice.generation_type.reduce((sum, g) => sum + (g.geo_mwh ?? 0), 0),
-            coal: latestPrice.generation_type.reduce((sum, g) => sum + (g.cg_mwh ?? 0), 0),
-            coGen: latestPrice.generation_type.reduce((sum, g) => sum + (g.cog_mwh ?? 0), 0),
-            dieselOil: latestPrice.generation_type.reduce((sum, g) => sum + (g.liq_mwh ?? 0), 0),
-        };
-        const totalGeneration = Object.values(generation).reduce((sum: number, val: number) => sum + val, 0);
 
-        // Normalize to percentages
-        const generationMix = {
-            battery: totalGeneration > 0 ? Math.round((generation.battery / totalGeneration) * 100) : 0,
-            hydro: totalGeneration > 0 ? Math.round((generation.hydro / totalGeneration) * 100) : 0,
-            wind: totalGeneration > 0 ? Math.round((generation.wind / totalGeneration) * 100) : 0,
-            solar: totalGeneration > 0 ? Math.round((generation.solar / totalGeneration) * 100) : 0,
-            gas: totalGeneration > 0 ? Math.round((generation.gas / totalGeneration) * 100) : 0,
-            coal: totalGeneration > 0 ? Math.round((generation.coal / totalGeneration) * 100) : 0,
-            coGen: totalGeneration > 0 ? Math.round((generation.coGen / totalGeneration) * 100) : 0,
-            geothermal: totalGeneration > 0 ? Math.round((generation.geothermal / totalGeneration) * 100) : 0,
-            dieselOil: totalGeneration > 0 ? Math.round((generation.dieselOil / totalGeneration) * 100) : 0,
-        };
+        const generation = parseGenerationMix(latestPrice.generation_type, fuelKeyMap);
+        const generationMix = normalizeGenerationMix(generation);
 
         const carbonIntensityResponse = await fetch(
             'https://api.em6.co.nz/ords/em6/data_api/current_carbon_intensity'
@@ -106,7 +101,7 @@ export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
         const emissions: CountryEmissions = {
             country: 'NZ',
             timestamp: latestCarbonIntensityData.timestamp,
-            totalDemandMW: totalGeneration,
+            totalDemandMW: getTotalGeneration(generation),
             carbonIntensity_gCO2kWh: latestCarbonIntensityData.nz_carbon_gkwh,
             generationMix,
         };
