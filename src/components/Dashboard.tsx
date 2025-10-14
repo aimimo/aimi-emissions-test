@@ -6,7 +6,7 @@ import {
     Typography,
     Button,
     CircularProgress,
-    Alert
+    Alert, Card, CardContent
 } from '@mui/material';
 import {fetchAllEmissions, type CountryEmissions} from '../api/emissions';
 import CountryCard from './CountryCard';
@@ -49,7 +49,7 @@ const Dashboard = () => {
             <Typography variant="h2"
                         gutterBottom
                         sx={{justifySelf: 'center'}}>
-                Live Emissions Dashboard
+                Live Emissions & Generation Mix
             </Typography>
             <Button
                 variant="contained"
@@ -83,14 +83,22 @@ const Dashboard = () => {
                             New Zealand (Aotearoa)
                         </Typography>
                         <CountryCard {...nzData} />
-                        <GenerationMixChart data={nzData}/>
+                        <Card sx={{mt: 3}}>
+                            <CardContent>
+                                <GenerationMixChart data={nzData}/>
+                            </CardContent>
+                        </Card>
                     </Grid>
                     <Grid size={{xs: 12, md: 6}}>
                         <Typography variant="h5" gutterBottom textAlign={'center'}>
                             Australia
                         </Typography>
                         <CountryCard {...auData} />
-                        <GenerationMixChart data={auData}/>
+                        <Card sx={{mt: 3}}>
+                            <CardContent>
+                                <GenerationMixChart data={auData}/>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 </Grid>
             )}

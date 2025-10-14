@@ -16,7 +16,7 @@ import {
     calculateRenewablePercentages,
     attachMWValues,
 } from '../utils/chartUtils.ts';
-import {Box, Card, ToggleButton, ToggleButtonGroup, Typography} from '@mui/material';
+import {Box, ToggleButton, ToggleButtonGroup, Typography} from '@mui/material';
 import {type CountryEmissions} from '../api/emissions';
 import {FUEL_COLORS, renewableFuels} from "../utils/constants.ts";
 import BarChartIcon from "@mui/icons-material/BarChart";
@@ -37,18 +37,23 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
     const chartDataWithMW = attachMWValues(chartData, data.totalDemandMW);
     const [newChartType, setChartType] = useState<'bar' | 'pie'>(chartType ?? 'bar')
     const theme = useTheme();
+
+    const handleChartType = (
+        _event: React.MouseEvent<HTMLElement>,
+        newChartType: 'bar' | 'pie',
+    ) => {
+        setChartType(newChartType);
+    };
+
     return (
-        <Card sx={{p: 3, mt: 2}}>
+        <Box>
             <Box sx={{display: 'flex', justifyContent: 'space-between', mt: 2, mb:3}}>
-                <Typography variant="h6" gutterBottom>
-                    Generation Mix: {data.country}
+                <Typography variant="h6">
+                    Generation Mix
                 </Typography>
                 <ToggleButtonGroup
-                    onChange={(_, value) => {
-                        if (value) {
-                            setChartType(value);
-                        }
-                    }}
+                    exclusive
+                    onChange={handleChartType}
                 >
                     <ToggleButton value="bar">
                         <BarChartIcon></BarChartIcon>
@@ -155,7 +160,7 @@ const GenerationMixChart = ({data, chartType}: GenerationMixChartProps) => {
                     </Typography>
                 </Box>
             </Box>
-        </Card>
+        </Box>
     );
 };
 

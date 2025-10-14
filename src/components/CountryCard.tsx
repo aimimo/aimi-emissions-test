@@ -22,7 +22,7 @@ const CountryCard = (props: CountryProps) => {
         <Card>
             <CardContent>
                 {/* Carbon intensity */}
-                <Typography variant="h6" textAlign={'center'}>Carbon Intensity</Typography>
+                <Typography variant="h6" marginBottom={"10px"}>Carbon Intensity</Typography>
                 <Box
                     sx={{
                         display: 'flex',
@@ -43,7 +43,7 @@ const CountryCard = (props: CountryProps) => {
                 {props.totalDemandMW && (
                     <Box sx={{marginTop: 2}}>
                         <Typography variant="body2">
-                            Total Demand: <strong>{props.totalDemandMW.toFixed(2)} MW</strong>
+                            Total Demand: <strong>{props.totalDemandMW.toLocaleString()} MW</strong>
                         </Typography>
                     </Box>
                 )}

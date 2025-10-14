@@ -1,13 +1,13 @@
 const FUEL_COLORS = {
-    hydro: '#1976d2',
-    wind: '#64B5F6',
-    solar: '#FFD700',
-    gas: '#FF9800',
+    hydro: '#266fb8',
+    wind: '#73bbf4',
+    solar: '#ffcc00',
+    gas: '#ff8000',
     coal: '#424242',
-    geothermal: '#D84315',
+    geothermal: '#bd4017',
     coGen: '#9C27B0',
     dieselOil: '#795548',
-    battery: '#4CAF50',
+    battery: '#4aba4e',
     other: '#9E9E9E',
 };
 

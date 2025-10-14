@@ -1,28 +1,29 @@
-import { Box, Typography } from '@mui/material';
+import {Box, Typography} from '@mui/material';
 
 interface FuelBreakdownItemProps {
     name: string;
     value: number;
     mw?: number;
     color: string;
+    showPercentage?: boolean;
 }
 
-const FuelBreakdownItem = ({ name, value, mw, color }: FuelBreakdownItemProps) => {
+const FuelBreakdownItem = ({name, value, mw, color, showPercentage = false}: FuelBreakdownItemProps) => {
     return (
         <Box
             sx={{
-                p: 1.5,
+                p: 0.8,
                 backgroundColor: '#f5f5f5',
                 borderRadius: 1,
-                borderLeft: `4px solid ${color}`,
+                borderLeft: `6px solid ${color}`,
             }}
         >
             <Typography variant="caption" display="block" color="textSecondary">
                 {name}
             </Typography>
-            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+            {showPercentage && <Typography variant="body2" sx={{fontWeight: 'bold'}}>
                 {value}%
-            </Typography>
+            </Typography>}
             {mw !== undefined && (
                 <Typography variant="caption" color="textSecondary">
                     {mw} MW
