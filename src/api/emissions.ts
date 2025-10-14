@@ -46,38 +46,6 @@ interface NZCarbonIntensityItem {
     nz_carbon_gkwh: number;
 }
 
-const generateMockAUData = (): CountryEmissions => {
-    return {
-        country: 'AU',
-        timestamp: new Date().toISOString(),
-        totalDemandMW: Math.floor(Math.random() * 10000) + 15000,
-        carbonIntensity_gCO2kWh: Math.floor(Math.random() * 200) + 250,
-        generationMix: {
-            coal: Math.floor(Math.random() * 30) + 30,
-            wind: Math.floor(Math.random() * 20) + 15,
-            solar: Math.floor(Math.random() * 20) + 10,
-            gas: Math.floor(Math.random() * 15) + 5,
-            other: Math.floor(Math.random() * 10) + 5,
-        },
-    };
-};
-
-const generateMockNZData = (): CountryEmissions => {
-    return {
-        country: 'NZ',
-        timestamp: new Date().toISOString(),
-        totalDemandMW: Math.floor(Math.random() * 1000) + 4000,
-        carbonIntensity_gCO2kWh: Math.floor(Math.random() * 50) + 50,
-        generationMix: {
-            hydro: Math.floor(Math.random() * 20) + 50,
-            wind: Math.floor(Math.random() * 20) + 15,
-            geothermal: Math.floor(Math.random() * 10) + 5,
-            gas: Math.floor(Math.random() * 10) + 5,
-            other: Math.floor(Math.random() * 5),
-        },
-    };
-};
-
 export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
     try {
         const priceResponse = await fetch(
@@ -128,7 +96,7 @@ export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
         );
         if (!carbonIntensityResponse.ok) {
             console.error('NZ Carbon Intensity API error:', carbonIntensityResponse.status);
-            console.log('Falling back to mock NZ data');
+            console.warn('Falling back to mock NZ data');
             return generateMockNZData();
         }
 
@@ -152,77 +120,31 @@ export const fetchNZEmissions = async (): Promise<CountryEmissions | null> => {
     }
 };
 
-interface AURegionData {
-    totalDemandMW: number;
-    carbonIntensity_gCO2kWh: number;
-    generationMix?: {
-        hydro?: number;
-        wind?: number;
-        solar?: number;
-        gas?: number;
-        coal?: number;
-        geothermal?: number;
-        other?: number;
-        battery?: number;
-        coGen?: number;
-        dieselOil?: number;
-    };
-}
-
-type AUApiResponse = Record<string, AURegionData>;
-
 export const fetchAUEmissions = async (): Promise<CountryEmissions | null> => {
     try {
         const response = await fetch(
             'http://localhost:3001/api/emissions/australia'
         );
 
-        if (!response.ok) {
-            console.error('AU API error:', response.status);
-            console.log('Falling back to mock AU data');
-            return generateMockAUData();
-        } else {
-            console.log('AU API response:', response);
+        if (response.ok) {
+            console.log("we got em");
         }
-
-        const data = (await response.json()) as AUApiResponse;
-
-        const totalDemand =
-            Object.values(data).reduce((sum, region) => {
-                return sum + (region.totalDemandMW || 0);
-            }, 0) || 0;
-
-        const aggregatedMix: Record<string, number> = {};
-        Object.values(data).forEach(region => {
-            Object.entries(region.generationMix || {}).forEach(([fuel, percent]) => {
-                aggregatedMix[fuel] = (aggregatedMix[fuel] || 0) + percent;
-            });
-        });
-
-        const avgCarbon =
-            Object.values(data).reduce((sum, region) => {
-                return sum + (region.carbonIntensity_gCO2kWh || 0);
-            }, 0) / Object.keys(data).length || 0;
-
-        const totalPercent = Object.values(aggregatedMix).reduce((a, b) => a + b, 0);
-
-        const normalizedMix = Object.fromEntries(
-            Object.entries(aggregatedMix).map(([fuel, val]) => [fuel, Math.round((val / totalPercent) * 100)])
-        );
+        const data = await response.json();
 
         const emissions: CountryEmissions = {
-            country: 'AU',
-            timestamp: new Date().toISOString(),
-            totalDemandMW: totalDemand,
-            carbonIntensity_gCO2kWh: Math.round(avgCarbon),
-            generationMix: normalizedMix
+            country: data.country,
+            timestamp: data.timestamp,
+            totalDemandMW: data.totalDemandMW,
+            carbonIntensity_gCO2kWh: data.carbonIntensity_gCO2kWh,
+            generationMix: data.generationMix
         };
 
+        console.log('AU data fetched successfully (frontend):', emissions);
         return emissions;
     } catch (error) {
         console.error('Error fetching AU emissions:', error);
-        console.log('Falling back to mock AU data');
-        return generateMockAUData();
+        console.warn('Falling back to mock AU data');
+        return null;
     }
 };
 
@@ -236,4 +158,20 @@ export const fetchAllEmissions = async (): Promise<{
     ]);
 
     return {nz, au};
+};
+
+const generateMockNZData = (): CountryEmissions => {
+    return {
+        country: 'NZ',
+        timestamp: new Date().toISOString(),
+        totalDemandMW: Math.floor(Math.random() * 1000) + 4000,
+        carbonIntensity_gCO2kWh: Math.floor(Math.random() * 50) + 50,
+        generationMix: {
+            hydro: Math.floor(Math.random() * 20) + 50,
+            wind: Math.floor(Math.random() * 20) + 15,
+            geothermal: Math.floor(Math.random() * 10) + 5,
+            gas: Math.floor(Math.random() * 10) + 5,
+            other: Math.floor(Math.random() * 5),
+        },
+    };
 };
